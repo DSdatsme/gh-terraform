@@ -13,6 +13,31 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+
+      - id: slack
+        uses: slackapi/slack-github-action@v1.22.0
+        with:
+          channel-id: "CHANNEL_ID"
+          payload: |
+            {
+              "text": "Deployment started (In Progress)",
+              "attachments": [
+                {
+                  "pretext": "Deployment started",
+                  "color": "dbab09",
+                  "fields": [
+                    {
+                      "title": "Status",
+                      "short": true,
+                      "value": "Started"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -29,6 +54,54 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan -out tf_plan_file
-      
+  
+        - id: slack
+        uses: slackapi/slack-github-action@v1.22.0
+        with:
+          channel-id: "#terraform"
+          payload: |
+            {
+              "text": "Deployment In Progress",
+              "attachments": [
+                {
+                  "pretext": "Deployment waiting for approval...",
+                  "color": "dbab09",
+                  "fields": [
+                    {
+                      "title": "Status",
+                      "short": true,
+                      "value": "Started"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+
       - name: Terraform Apply
-        run: terraform apply tf_plan_file
+        run: terraform apply tf_plan_file -auto-approve
+
+      - uses: slackapi/slack-github-action@v1.22.0
+        with:
+          channel-id: "#terraform"
+          update-ts: ${{ steps.slack.outputs.ts }}
+          payload: |
+            {
+              "text": "Deployment finished (Completed)",
+              "attachments": [
+                {
+                  "pretext": "Deployment finished",
+                  "color": "28a745",
+                  "fields": [
+                    {
+                      "title": "Status",
+                      "short": true,
+                      "value": "Completed"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
