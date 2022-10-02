@@ -3,9 +3,9 @@ name: Terraformer
 on:
   pull_request:
     types: [opened, reopened]
-      paths:
-        - '**.tf'
-        - '**.tfvars'
+    paths:
+      - '**.tf'
+      - '**.tfvars'
   
   workflow_dispatch:
 
