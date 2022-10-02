@@ -1,14 +1,14 @@
 {
-  "text": "GitHub Action ${{ github.workflow }} ${{ github.run_number }}",
+  "text": "GitHub Action ${{ github.workflow }} \nURL: ${{ github.event.head_commit.url }}",
   "attachments": [
     {
-      "pretext": "Deployment waiting for approval...",
+      "pretext": "Started By: ${{ github.actor }} ",
       "color": "dbab09",
       "fields": [
         {
           "title": "Status",
           "short": true,
-          "value": "${{ job.status }}"
+          "value": "${{ github.action_status }}"
         }
       ]
     }
