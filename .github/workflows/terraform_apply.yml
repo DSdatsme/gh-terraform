@@ -31,4 +31,4 @@ jobs:
         run: terraform plan -out tf_plan_file
       
       - name: Terraform Apply
-        run: terraform apply tf_plan_file -auto-approve -input=false
+        run: terraform apply tf_plan_file -auto-approve
