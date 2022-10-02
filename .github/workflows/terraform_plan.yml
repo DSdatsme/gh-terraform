@@ -1,0 +1,34 @@
+name: Terraform Planner
+
+on:
+  pull_request:
+    types: [opened, reopened]
+    paths:
+      - '**.tf'
+      - '**.tfvars'
+
+jobs:
+  terraform_plan:
+
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    # This is just an example condition, which will always be true due to 'on' event condition is set to pull request.     
+    if: github.ref_type == 'branch' && github.ref_name != 'master'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -out tf_plan_file -input=false -lock=false
