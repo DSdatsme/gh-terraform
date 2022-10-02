@@ -3,7 +3,7 @@
   "attachments": [
     {
       "pretext": "Started By: {{ github.actor }}",
-      "color": $MSG_COLOR,
+      "color": "{{ MSG_COLOR}}",
       "fields": [
         {
           "title": "Status",
