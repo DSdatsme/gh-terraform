@@ -17,7 +17,7 @@ jobs:
       - id: slack
         uses: slackapi/slack-github-action@v1.22.0
         with:
-          channel-id: "CHANNEL_ID"
+          channel-id: "#terraform"
           payload: |
             {
               "text": "Deployment started (In Progress)",
