@@ -3,12 +3,12 @@
   "attachments": [
     {
       "pretext": "Started By: {{ github.actor }}",
-      "color": "$MSG_COLOR",
+      "color": $MSG_COLOR,
       "fields": [
         {
           "title": "Status",
           "short": true,
-          "value": "${{ STATUS }}a"
+          "value": "${{ env.status }}a"
         }
       ]
     }
