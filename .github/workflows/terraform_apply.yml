@@ -20,7 +20,7 @@ jobs:
       - id: slack
         uses: slackapi/slack-github-action@v1.22.0
         with:
-          channel-id: $SLACK_CHANNEL
+          channel-id: ${{ env.SLACK_CHANNEL }}
           payload: |
             {
               "text": "Deployment started (In Progress)",
@@ -39,7 +39,7 @@ jobs:
               ]
             }
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -60,7 +60,7 @@ jobs:
   
       - uses: slackapi/slack-github-action@v1.22.0
         with:
-          channel-id: $SLACK_CHANNEL
+          channel-id: ${{ env.SLACK_CHANNEL }}
           update-ts: ${{ steps.slack.outputs.ts }}
           payload: |
             {
@@ -87,7 +87,7 @@ jobs:
 
       - uses: slackapi/slack-github-action@v1.22.0
         with:
-          channel-id: $SLACK_CHANNEL
+          channel-id: ${{ env.SLACK_CHANNEL }}
           update-ts: ${{ steps.slack.outputs.ts }}
           payload: |
             {
