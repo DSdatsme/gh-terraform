@@ -19,6 +19,10 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v3
+      - run: env
+        env: 
+          STATUS: "Starting..."
+          MSG_COLOR: "dee647"
 
       - id: slack
         uses: slackapi/slack-github-action@v1.22.0
@@ -27,8 +31,8 @@ jobs:
           payload-file-path: ./.github/resources/slack-notification-payload.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
-          STATUS: Starting...
-          MSG_COLOR: dee647
+          STATUS: "Starting..."
+          MSG_COLOR: "dee647"
 
       - id: 'auth'
         uses: 'google-github-actions/auth@v0'
@@ -51,8 +55,8 @@ jobs:
           payload-file-path: ./.github/resources/slack-notification-payload.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
-          STATUS: Waiting for approval...
-          MSG_COLOR: dee647
+          STATUS: "Waiting for approval..."
+          MSG_COLOR: "dee647"
 
       - name: Terraform Apply
         run: terraform apply tf_plan_file
@@ -65,5 +69,5 @@ jobs:
           payload-file-path: ./.github/resources/slack-notification-payload.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
-          STATUS: Completed
-          MSG_COLOR: 5cb58a
+          STATUS: "Completed"
+          MSG_COLOR: "5cb58a"
