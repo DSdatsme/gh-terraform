@@ -8,7 +8,7 @@
         {
           "title": "Status",
           "short": true,
-          "value": '${{ MSG_COLOR }}'
+          "value": "${{ github.env.MSG_COLOR }}"
         }
       ]
     }
