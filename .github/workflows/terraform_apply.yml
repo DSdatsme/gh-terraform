@@ -55,10 +55,10 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out tf_plan_file
   
-        - id: slack
-        uses: slackapi/slack-github-action@v1.22.0
+      - uses: slackapi/slack-github-action@v1.22.0
         with:
           channel-id: "#terraform"
+          update-ts: ${{ steps.slack.outputs.ts }}
           payload: |
             {
               "text": "Deployment In Progress",
