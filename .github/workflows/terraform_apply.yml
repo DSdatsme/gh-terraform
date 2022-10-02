@@ -6,6 +6,9 @@ on:
       - master
   workflow_dispatch:
 
+env:
+  SLACK_CHANNEL: CTR68RQ80
+
 jobs:
   terraform_apply:
 
@@ -17,7 +20,7 @@ jobs:
       - id: slack
         uses: slackapi/slack-github-action@v1.22.0
         with:
-          channel-id: "CTR68RQ80"
+          channel-id: $SLACK_CHANNEL
           payload: |
             {
               "text": "Deployment started (In Progress)",
@@ -57,7 +60,7 @@ jobs:
   
       - uses: slackapi/slack-github-action@v1.22.0
         with:
-          channel-id: "#terraform"
+          channel-id: $SLACK_CHANNEL
           update-ts: ${{ steps.slack.outputs.ts }}
           payload: |
             {
@@ -84,7 +87,7 @@ jobs:
 
       - uses: slackapi/slack-github-action@v1.22.0
         with:
-          channel-id: "#terraform"
+          channel-id: $SLACK_CHANNEL
           update-ts: ${{ steps.slack.outputs.ts }}
           payload: |
             {
