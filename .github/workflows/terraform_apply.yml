@@ -26,7 +26,9 @@ jobs:
           channel-id: ${{ env.SLACK_CHANNEL }}
           payload-file-path: ./.github/resources/slack-notification-payload.json
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+          STATUS: Starting...
+          MSG_COLOR: dee647
 
       - id: 'auth'
         uses: 'google-github-actions/auth@v0'
@@ -49,14 +51,19 @@ jobs:
           payload-file-path: ./.github/resources/slack-notification-payload.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+          STATUS: Waiting for approval...
+          MSG_COLOR: dee647
 
       - name: Terraform Apply
         run: terraform apply tf_plan_file
 
       - uses: slackapi/slack-github-action@v1.22.0
+        if: success() || failure()
         with:
           channel-id: ${{ env.SLACK_CHANNEL }}
           update-ts: ${{ steps.slack.outputs.ts }}
           payload-file-path: ./.github/resources/slack-notification-payload.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+          STATUS: Completed
+          MSG_COLOR: 5cb58a
