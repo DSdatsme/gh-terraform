@@ -21,23 +21,7 @@ jobs:
         uses: slackapi/slack-github-action@v1.22.0
         with:
           channel-id: ${{ env.SLACK_CHANNEL }}
-          payload: |
-            {
-              "text": "Deployment started (In Progress)",
-              "attachments": [
-                {
-                  "pretext": "Deployment started",
-                  "color": "dbab09",
-                  "fields": [
-                    {
-                      "title": "Status",
-                      "short": true,
-                      "value": "Started"
-                    }
-                  ]
-                }
-              ]
-            }
+          payload-file-path: ./.github/resources/slack-notification-payload.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
