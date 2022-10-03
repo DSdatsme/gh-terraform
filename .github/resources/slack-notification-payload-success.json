@@ -1,0 +1,16 @@
+{
+  "text": "GitHub Action: ${{ github.workflow }}",
+  "attachments": [
+    {
+      "pretext": "Started By: {{ github.actor }}",
+      "color": "#5cb58a",
+      "fields": [
+        {
+          "title": "Status",
+          "short": true,
+          "value": "Success :tada: "
+        }
+      ]
+    }
+  ]
+}
