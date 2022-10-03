@@ -78,7 +78,7 @@ jobs:
 
       - name: Check for failures
         uses: slackapi/slack-github-action@v1.22.0
-        if: steps.tf_init.outputs.status == 'failure' || steps.tf_plan.outputs.status == 'failure' || steps.tf_apply.outputs.status == 'failure'
+        if: steps.tf_init.outcome != 'success' || steps.tf_plan.outcome != 'success' || steps.tf_apply.outcome != 'success' || failure()
         with:
           channel-id: ${{ env.SLACK_CHANNEL }}
           update-ts: ${{ steps.slack.outputs.ts }}
