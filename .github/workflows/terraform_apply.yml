@@ -20,7 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-
       - name: Checkout
         uses: actions/checkout@v3
       - run: env
@@ -47,10 +46,13 @@ jobs:
       - id: 'tf_init'
         name: Terraform Init
         run: terraform init
+        continue-on-error: true
 
       - id: 'tf_plan'
         name: Terraform Plan
         run: terraform plan -out tf_plan_file
+        if: ${{ !failure() }}
+        continue-on-error: true
   
       - uses: slackapi/slack-github-action@v1.22.0
         with:
@@ -71,6 +73,8 @@ jobs:
       - id: 'tf_apply'
         name: Terraform Apply
         run: terraform apply tf_plan_file
+        if: ${{ !failure() }}
+        continue-on-error: true
 
       - name: Check for failures
         uses: slackapi/slack-github-action@v1.22.0
