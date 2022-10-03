@@ -65,7 +65,7 @@ jobs:
           # Updates existing message from the first step
           message_id: ${{ steps.slack.outputs.message_id }}
           channel: terraform
-          status: Waiting for approval...
+          status: "Waiting for approval... :sonic-waiting:"
           color: warning
 
       - name: Wait for approval
@@ -89,7 +89,7 @@ jobs:
         with:
           message_id: ${{ steps.slack.outputs.message_id }}
           channel: terraform
-          status: SUCCESS
+          status: "SUCCESS :tada:"
           color: good
 
       - name: Post notify on failure
@@ -100,6 +100,6 @@ jobs:
         with:
           message_id: ${{ steps.slack.outputs.message_id }}
           channel: terraform
-          status: FAILED
+          status: "FAILED :/"
           color: danger
       
