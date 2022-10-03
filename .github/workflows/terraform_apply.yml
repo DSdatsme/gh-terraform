@@ -25,15 +25,17 @@ jobs:
       - run: env
         env: 
           STATUS: "Starting..."
-          MSG_COLOR: "dee647"
 
-      - id: slack
-        uses: slackapi/slack-github-action@v1.22.0
-        with:
-          channel-id: ${{ env.SLACK_CHANNEL }}
-          payload-file-path: ./.github/resources/start-deploy.json
+      - name: Notify slack success
+        if: success()
+        id: slack # IMPORTANT: reference this step ID value in future Slack steps
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          channel: terraform
+          status: Starting...
+          color: warning
 
       - id: 'auth'
         uses: 'google-github-actions/auth@v0'
@@ -54,13 +56,17 @@ jobs:
         if: ${{ !failure() }}
         continue-on-error: true
   
-      - uses: slackapi/slack-github-action@v1.22.0
-        with:
-          channel-id: ${{ env.SLACK_CHANNEL }}
-          update-ts: ${{ steps.slack.outputs.ts }}
-          payload-file-path: ./.github/resources/wait-for-approval.json
+      - name: Slack message for approval
+        if: success()
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          # Updates existing message from the first step
+          message_id: ${{ steps.slack.outputs.message_id }}
+          channel: terraform
+          status: Waiting for approval...
+          color: warning
 
       - name: Wait for approval
         uses: trstringer/manual-approval@v1
@@ -74,23 +80,26 @@ jobs:
         name: Terraform Apply
         run: terraform apply tf_plan_file
         if: ${{ !failure() }}
-        continue-on-error: true
 
-      - name: Check for failures
-        uses: slackapi/slack-github-action@v1.22.0
-        if: steps.tf_init.outcome != 'success' || steps.tf_plan.outcome != 'success' || steps.tf_apply.outcome != 'success' || failure()
-        with:
-          channel-id: ${{ env.SLACK_CHANNEL }}
-          update-ts: ${{ steps.slack.outputs.ts }}
-          payload-file-path: ./.github/resources/slack-notification-payload-failure.json
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
-      
-      - uses: slackapi/slack-github-action@v1.22.0
+      - name: Post notify on success
         if: success()
-        with:
-          channel-id: ${{ env.SLACK_CHANNEL }}
-          update-ts: ${{ steps.slack.outputs.ts }}
-          payload-file-path: ./.github/resources/slack-notification-payload-success.json
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          message_id: ${{ steps.slack.outputs.message_id }}
+          channel: terraform
+          status: SUCCESS
+          color: good
+
+      - name: Post notify on failure
+        if: failure()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          message_id: ${{ steps.slack.outputs.message_id }}
+          channel: terraform
+          status: FAILED
+          color: danger
+      
