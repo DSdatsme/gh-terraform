@@ -17,3 +17,9 @@ resource "google_storage_bucket" "basic-bucket" {
   location      = "EU"
   force_destroy = true
 }
+
+resource "google_storage_bucket" "basic-bucket2" {
+  name          = "dsdatsme12344"
+  location      = "EU"
+  force_destroy = true
+}
