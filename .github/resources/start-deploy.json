@@ -1,0 +1,16 @@
+{
+  "text": "GitHub Action: ${{ github.workflow }}",
+  "attachments": [
+    {
+      "pretext": "Started By: {{ github.actor }}",
+      "color": "#dee647",
+      "fields": [
+        {
+          "title": "Status",
+          "short": true,
+          "value": "Starting the deploy..."
+        }
+      ]
+    }
+  ]
+}
