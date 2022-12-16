@@ -6,8 +6,8 @@ on:
       - master
   workflow_dispatch:
 
-env:
-  SLACK_CHANNEL: CTR68RQ80
+# env:
+#   SLACK_CHANNEL: CTR68RQ80
 
 concurrency:
   group : ${{ github.ref }}
