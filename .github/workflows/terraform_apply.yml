@@ -33,7 +33,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         uses: voxmedia/github-action-slack-notify-build@v1
         with:
-          channel: terraform
+          channel: random
           status: Starting...
           color: warning
 
@@ -64,7 +64,7 @@ jobs:
         with:
           # Updates existing message from the first step
           message_id: ${{ steps.slack.outputs.message_id }}
-          channel: terraform
+          channel: random
           status: "Waiting for approval... :sonic-waiting:"
           color: warning
 
@@ -88,7 +88,7 @@ jobs:
         uses: voxmedia/github-action-slack-notify-build@v1
         with:
           message_id: ${{ steps.slack.outputs.message_id }}
-          channel: terraform
+          channel: random
           status: "SUCCESS :tada:"
           color: good
 
@@ -99,7 +99,7 @@ jobs:
         uses: voxmedia/github-action-slack-notify-build@v1
         with:
           message_id: ${{ steps.slack.outputs.message_id }}
-          channel: terraform
+          channel: random
           status: "FAILED :/"
           color: danger
       
