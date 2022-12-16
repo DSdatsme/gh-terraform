@@ -15,7 +15,9 @@ provider "google" {
 resource "google_storage_bucket" "basic-bucket" {
   name          = "dsdatsme1234"
   location      = "EU"
-
+    labels = {
+    "env" = "dev"
+  }
   force_destroy = true
 }
 
