@@ -1,21 +1,29 @@
 terraform {
   required_providers {
     google = {
-      source = "hashicorp/google"
+      source  = "hashicorp/google"
       version = "4.38.0"
     }
   }
 }
 
+terraform {
+  backend "gcs" {
+    bucket  = "dsdatsme-tfstate-store"
+    prefix  = "gh-terraform-state"
+  }
+}
+
+
 provider "google" {
   # Configuration options
-  project     = "red-alloy-290810"
+  project = "red-alloy-290810"
 }
 
 resource "google_storage_bucket" "basic-bucket" {
-  name          = "dsdatsme1234"
-  location      = "EU"
-    labels = {
+  name     = "dsdatsme1234"
+  location = "EU"
+  labels = {
     "env" = "dev"
   }
   force_destroy = true
