@@ -26,7 +26,7 @@ jobs:
           
       - name: Google Chat Notification
         run: |
-          curl -X POST \
+          curl -X POST '${{ secrets.WEBHOOK }}' \
             -H "Content-Type: application/json" \
             -d '{
               "cards": [
@@ -48,8 +48,7 @@ jobs:
                   ]
                 }
               ]
-            }' \
-            '${{ secrets.WEBHOOK }}'
+            }'
 
       - name: Configure AWS Credentials Action For GitHub Actions
         uses: aws-actions/configure-aws-credentials@v1
@@ -75,7 +74,7 @@ jobs:
       - name: Google Chat message for approval
         if: success()
         run: |
-          curl -X POST \
+          curl -X POST '${{ secrets.WEBHOOK }}' \
             -H "Content-Type: application/json" \
             -d '{
               "cards": [
@@ -97,8 +96,7 @@ jobs:
                   ]
                 }
               ]
-            }' \
-            '${{ secrets.WEBHOOK }}'
+            }'
           
       - name: Wait for approval
         uses: trstringer/manual-approval@v1
