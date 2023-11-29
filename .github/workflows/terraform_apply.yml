@@ -26,11 +26,10 @@ jobs:
 
       - name: Notify slack success
         if: success()
-        id: slack # IMPORTANT: reference this step ID value in future Slack steps
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: voxmedia/github-action-slack-notify-build@v1
+        id: 'notify google chat' # IMPORTANT: reference this step ID value in future Slack steps
+        uses: 'google-github-actions/sent-google-chat-webhook@v0.0.1'
         with:
+          webhook_url: '${{ secrets.WEBHOOK_URL }}'
           channel: random
           status: Starting...
           color: warning
@@ -56,18 +55,66 @@ jobs:
         if: ${{ !failure() }}
         continue-on-error: true
   
-      - name: Slack message for approval
+      - name: Google Chat message for approval
         if: success()
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: voxmedia/github-action-slack-notify-build@v1
-        with:
-          # Updates existing message from the first step
-          message_id: ${{ steps.slack.outputs.message_id }}
-          channel: random
-          status: "Waiting for approval... :sonic-waiting:"
-          color: warning
-
+        run: |
+          curl --location --request POST '${{ secrets.WEBHOOK }}' \
+          --header 'Content-Type: application/json' \
+          --data-raw '{
+              "cards": [
+                  {
+                      "header": {
+                          "title": "1",
+                          "subtitle": "2"
+                      },
+                      "sections": [
+                          {
+                              "widgets": [
+                                  {
+                                     "keyValue": {
+                                          "topLabel": "Creator",
+                                          "content": "3"
+                                      },
+                                   },
+                                   {
+                                     "keyValue": {
+                                          "topLabel": "Title",
+                                          "content": "4"
+                                      }
+                                   },
+                                   {
+                                     "keyValue": {
+                                          "topLabel": "Assigned Lables",
+                                          "content": "5"
+                                      }
+                                   },
+                                   {
+                                     "keyValue": {
+                                          "topLabel": "Assignees",
+                                          "content": "6"
+                                      }
+                                   },
+                                   {
+                                      "buttons": [
+                                          {
+                                              "textButton": {
+                                                  "text": "OPEN ISSUE",
+                                                  "onClick": {
+                                                      "openLink": {
+                                                          "url": "7"
+                                                      }
+                                                  }
+                                              }
+                                          }
+                                      ]
+                                  }
+                              ]
+                          }
+                      ]
+                  }
+              ]
+          }
+          
       - name: Wait for approval
         uses: trstringer/manual-approval@v1
         timeout-minutes: 20
@@ -81,25 +128,25 @@ jobs:
         run: terraform apply tf_plan_file
         if: ${{ !failure() }}
 
-      - name: Post notify on success
-        if: success()
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: voxmedia/github-action-slack-notify-build@v1
-        with:
-          message_id: ${{ steps.slack.outputs.message_id }}
-          channel: random
-          status: "SUCCESS :tada:"
-          color: good
+      # - name: Post notify on success
+      #   if: success()
+      #   env:
+      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      #   uses: voxmedia/github-action-slack-notify-build@v1
+      #   with:
+      #     message_id: ${{ steps.slack.outputs.message_id }}
+      #     channel: random
+      #     status: "SUCCESS :tada:"
+      #     color: good
 
-      - name: Post notify on failure
-        if: failure()
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: voxmedia/github-action-slack-notify-build@v1
-        with:
-          message_id: ${{ steps.slack.outputs.message_id }}
-          channel: random
-          status: "FAILED :/"
-          color: danger
+      # - name: Post notify on failure
+      #   if: failure()
+      #   env:
+      #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      #   uses: voxmedia/github-action-slack-notify-build@v1
+      #   with:
+      #     message_id: ${{ steps.slack.outputs.message_id }}
+      #     channel: random
+      #     status: "FAILED :/"
+      #     color: danger
       
