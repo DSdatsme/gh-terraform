@@ -26,7 +26,7 @@ jobs:
           
       - name: Google Chat Notification
         run: |
-          curl -X POST '${{ secrets.WEBHOOK }}' \
+          curl -X POST "https://chat.googleapis.com/v1/spaces/AAAARQIpEKs/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=HyxBPYSUnSAEXb9V4M_Z_Wbhht-JJorGi-T6p7DkItQ" \
             -H "Content-Type: application/json" \
             -d '{
               "cards": [
@@ -74,7 +74,7 @@ jobs:
       - name: Google Chat message for approval
         if: success()
         run: |
-          curl -X POST '${{ secrets.WEBHOOK }}' \
+          curl -X POST "https://chat.googleapis.com/v1/spaces/AAAARQIpEKs/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=HyxBPYSUnSAEXb9V4M_Z_Wbhht-JJorGi-T6p7DkItQ" \
             -H "Content-Type: application/json" \
             -d '{
               "cards": [
