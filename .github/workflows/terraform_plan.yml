@@ -1,36 +1,81 @@
-name: Terraform Planner
+name: Terragrunt Deployment
 
 on:
   pull_request:
-    types: [opened, reopened]
-    paths:
-      - '**.tf'
-      - '**.tfvars'
+    branches:
+      - main
 
 jobs:
-  terraform_plan:
-
-    name: Terraform Plan
+  plan:
     runs-on: ubuntu-latest
-    # This is just an example condition, which will always be true due to 'on' event condition is set to pull request.     
-    if: github.ref_type == 'branch' && github.ref_name != 'master'
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - name: Configure AWS Credentials Action For GitHub Actions
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Install Terragrunt
+        run: |
+          wget -q https://github.com/gruntwork-io/terragrunt/releases/download/v0.32.0/terragrunt_linux_amd64
+          chmod +x terragrunt_linux_amd64
+          sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+
+      - name: Plan on Pull Request
+        run: |
+          terragrunt init
+          terragrunt plan -out=tfplan
+        env:
+          TFPATH: dev # Set this to the environment folder
+
+      - name: Comment Plan on Pull Request
+        uses: unsplash/comment-on-pr@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2 
+          msg: |
+            **Terraform Plan:**
+            ```
+            $(cat tfplan)
+            ```
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+  apply:
+    needs: plan
+    runs-on: ubuntu-latest
 
-      - name: Terraform Init
-        run: terraform init
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - name: Terraform Plan
-        run: terraform plan -out tf_plan_file -input=false -lock=false
+      - name: Install Terragrunt
+        run: |
+          wget -q https://github.com/gruntwork-io/terragrunt/releases/download/v0.32.0/terragrunt_linux_amd64
+          chmod +x terragrunt_linux_amd64
+          sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+
+      - name: Apply on Merge
+        run: |
+          terragrunt apply -auto-approve
+        env:
+          TFPATH: dev # Set this to the environment folder
+
+      - name: Manual Approval
+        if: success()
+        run: |
+          echo "Deployment to development successful. Manually approve before deploying to staging."
+
+  deploy-staging:
+    needs: apply
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Terragrunt
+        run: |
+          wget -q https://github.com/gruntwork-io/terragrunt/releases/download/v0.32.0/terragrunt_linux_amd64
+          chmod +x terragrunt_linux_amd64
+          sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
+
+      - name: Apply on Staging
+        run: |
+          terragrunt apply -auto-approve
+        env:
+          TFPATH: staging # Set this to the environment folder
