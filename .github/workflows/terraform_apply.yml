@@ -24,15 +24,66 @@ jobs:
         env: 
           STATUS: "Starting..."
 
-      - name: Notify slack success
+      - name: notify Google Chat success
         if: success()
-        id: 'notify google chat' # IMPORTANT: reference this step ID value in future Slack steps
-        uses: 'google-github-actions/sent-google-chat-webhook@v0.0.1'
-        with:
-          webhook_url: '${{ secrets.WEBHOOK_URL }}'
-          channel: random
-          status: Starting...
-          color: warning
+        run: |
+          curl --location --request POST '${{ secrets.WEBHOOK }}' \
+          --header 'Content-Type: application/json' \
+          --data-raw '{
+              "cards": [
+                  {
+                      "header": {
+                          "title": "1",
+                          "subtitle": "2"
+                      },
+                      "sections": [
+                          {
+                              "widgets": [
+                                  {
+                                     "keyValue": {
+                                          "topLabel": "Creator",
+                                          "content": "3"
+                                      },
+                                   },
+                                   {
+                                     "keyValue": {
+                                          "topLabel": "Title",
+                                          "content": "4"
+                                      }
+                                   },
+                                   {
+                                     "keyValue": {
+                                          "topLabel": "Assigned Lables",
+                                          "content": "5"
+                                      }
+                                   },
+                                   {
+                                     "keyValue": {
+                                          "topLabel": "Assignees",
+                                          "content": "6"
+                                      }
+                                   },
+                                   {
+                                      "buttons": [
+                                          {
+                                              "textButton": {
+                                                  "text": "OPEN ISSUE",
+                                                  "onClick": {
+                                                      "openLink": {
+                                                          "url": "7"
+                                                      }
+                                                  }
+                                              }
+                                          }
+                                      ]
+                                  }
+                              ]
+                          }
+                      ]
+                  }
+              ]
+          }
+
 
       - name: Configure AWS Credentials Action For GitHub Actions
         uses: aws-actions/configure-aws-credentials@v1
